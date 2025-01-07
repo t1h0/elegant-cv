@@ -62,6 +62,13 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Icon Setup
+\def\iconsep{\space}
+\def\contactsep{\space$\cdot$\space}
+\def\websitesep{\space|\space}
+\def\techstackicon{{\scriptsize\faLayerGroup}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Joinlist command to join strings in a list
 \newcounter{ilist}%
 \def\joinlist#1#2{%
@@ -80,10 +87,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % HEAD: Commands for printing name, address, picture, websites, etc.
-% Separators
-\newcommand{\iconsep}{\space}
-\newcommand{\contactsep}{\space$\cdot$\space}
-\newcommand{\websitesep}{\space|\space}
 
 \def \@name {}
 \def \name#1{\def\@name{#1}}        % \name command can be used to set name
@@ -225,10 +228,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SECTIONS: Create section headings
 
+% Tech-Stack Indicator
+
+\newcommand{\techstack}[1][\techstackicon~Tech-Stack]{%
+  #1%
+}
+
 % Used to create large resume section
-\NewEnviron{cvSection}[1]{
+\NewEnviron{cvSection}[2][]{
   \sectionskip
-  \textbf{\MakeUppercase{#1}}
+  \ifstrempty{#1}{
+    \textbf{\MakeUppercase{#2}}
+  }{
+    \textbf{\MakeUppercase{#2}} \hfill #1{\parfillskip0pt\par}%
+  }
   \sectionlineskip
   \hrule
   \begin{list}{}{
@@ -241,26 +254,32 @@
   \end{list}
 }
 
+
+
 % Used to format job listing
-\NewEnviron{cvEntry}[4]{
+\NewEnviron{cvEntry}[5][]{
   %%%%%%%%%%%%%%%%%%%%%% Default Layout: %%%%%%%%%%%%%%%%%%%%%%$%%
   %%    Title (bold)                     Dates (regular)        %%
   %%    Employer (emphasis)              Location (emphasis)    %%
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%$%%%%%
   \item[]
-  \textbf{#1}                 \hfill                  {    #2}% Stop a space
-  \ifstrempty{#3}{}{
+  \textbf{#2}                 \hfill                  {    #3}%
+  \ifstrempty{#4}{}{
     \\
-    \emph{#3}                \hfill                  \emph{#4}% Stop a space
+    \emph{#4}                \hfill                  \emph{#5}%
   }
-
-  \ifstrempty{\BODY}{}{
-    \begin{list}{$\cdot$}{
+  \par
+  \ifstrempty{#1\BODY}{}{
+    \begin{list}{\textbullet}{
         \setlength{\itemsep}{-.5em}
         \setlength{\leftmargin}{1em}
-        \vspace{-1.5em}
+        % \vspace{-1.5em}
       }
-      \item[]%
+      \ifstrempty{#1}{
+      \vspace{-1.5em}\item[]
+            }{
+      \item[\techstackicon] \techstack[#1]%
+            }%
             \BODY%
     \end{list}
   }
