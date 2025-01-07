@@ -19,24 +19,25 @@
 \LoadClass[12pt,a4paper]{article}
 
 % Page layout
-\usepackage[a4paper,margin=1.27cm, bottom=2.54cm, footskip=1.27cm]{geometry}
-\usepackage{fancyhdr}
+\RequirePackage[a4paper,margin=1.27cm, bottom=2.54cm, footskip=1.27cm]{geometry}
+\RequirePackage{fancyhdr}
 % Text appearance
-\usepackage{fontspec}
-\usepackage[parfill]{parskip} 
-\usepackage{bm}
-\usepackage{xcolor}
+\RequirePackage{fontspec}
+\RequirePackage[parfill]{parskip}
+\RequirePackage{bm}
+\RequirePackage{xcolor}
 % Content
-\usepackage{pdfpages}
-\usepackage{graphicx}
-\usepackage[export]{adjustbox}
-\usepackage{float}
+\RequirePackage{fontawesome5}
+\RequirePackage{pdfpages}
+\RequirePackage{graphicx}
+\RequirePackage[export]{adjustbox}
+\RequirePackage{float}
 % Control sequences
-\usepackage{environ}
-\usepackage{ifthen}
-\usepackage{etoolbox}
-\usepackage{xstring}
-\usepackage{iflang}
+\RequirePackage{environ}
+\RequirePackage{ifthen}
+\RequirePackage{etoolbox}
+\RequirePackage{xstring}
+\RequirePackage{iflang}
 
 \setmainfont{Latin Modern Roman}
 
@@ -49,7 +50,7 @@
   \fancyfoot[C]{\color{lightgray}\@name~$\cdot$~\pdftitle}
   \fancyfoot[R]{\color{lightgray}\thepage}
 
-  \usepackage{hyperref}
+  \RequirePackage{hyperref}
   \hypersetup{
     pdftitle =  \pdftitle,
     pdfauthor = \@name,
@@ -61,60 +62,11 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% HEAD: Commands for printing name, address, picture, websites, etc.
-
-\def \name#1{\def\@name{#1}}        % \name command can be used to set name
-\def \@name {}                      % Set \@name to empty by default
-
-% \address command can be used to set first address
-\let \@address \relax
-\def \address #1{
-  \def \@address {#1}
-}
-% \contact command can be used to set contact
-\let \@contact \relax
-\def \contact #1{
-  \def \@contact {#1}
-}
-
-% \picture command can be used to set picture
-\let \@picture \relax
-\def \picture #1{
-  \def \@picture {#1}
-}
-
-% \printsubheader is used to style the subheader
-\def \printsubheader #1{
-  {
-      \centering#1
-
-    }
-  \par
-  \subheaderskip
-}
-
-
-% \printname is used to print the name as a page header
-\def \printname {
-  {
-      \centering\textbf{\MakeUppercase{\namesize\@name}}
-
-    }
-  \par
-  \nameskip
-}
-
-% for websites
-
-% Command to add a website
-\def\website#1#2{%
-  \listadd{\websites}{\href{#1}{#2}}
-}
-
 % Joinlist command to join strings in a list
+\newcounter{ilist}%
 \def\joinlist#1#2{%
   \def\delim{#1}%
-  \newcounter{ilist}%
+  \setcounter{ilist}{0}%
   \renewcommand*{\do}[1]{%
     \ifnum\value{ilist}=0
       ##1%
@@ -126,13 +78,89 @@
   \dolistloop{#2}%
 }
 
-% Command to print websites
-\def\printwebsites#1{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% HEAD: Commands for printing name, address, picture, websites, etc.
+% Separators
+\newcommand{\iconsep}{\space}
+\newcommand{\contactsep}{\space$\cdot$\space}
+\newcommand{\websitesep}{\space|\space}
+
+\def \@name {}
+\def \name#1{\def\@name{#1}}        % \name command can be used to set name
+
+% \address command
+\let \@address \relax
+\def \address #1{
+  \def \@address {#1}
+}
+
+% \phone command
+\newcommand*{\phone}[2]{
+  \listadd{\contacts}{\faMobile\iconsep\href{tel:#1}{#2}}
+}
+% \mail command
+\newcommand*{\mail}[1]{
+  \listadd{\contacts}{\faEnvelope\iconsep\href{mailto:#1}{#1}}
+}
+% \homepage command
+\def\homepage#1#2{%
+  \listadd{\websites}{\faHome\iconsep\href{#1}{#2}}
+}
+% \github command
+\def\github#1{%
+  \listadd{\websites}{\faGithubSquare\iconsep\href{https://github.com/#1}{#1}}
+}
+% \linkedin command
+\def\linkedin#1{%
+  \listadd{\websites}{\faLinkedin\iconsep\href{https://www.linkedin.com/in/#1}{#1}}
+}
+% \picture command can be used to set picture
+\let \@picture \relax
+\def \picture #1{
+  \def \@picture {#1}
+}
+
+%%% Print commands %%%
+
+% \printname is used to print the name as a page header
+\def \printname {
+  {
+      \centering\textbf{\MakeUppercase{\namesize\@name}}
+      \par
+    }
+  \nameskip
+}
+
+% \printaddress is used to style the subheader
+\def \printaddress{
+  \@ifundefined{@address}{}{
+    {
+        \centering\@address
+        \par
+      }
+    \subheaderskip
+  }
+}
+
+% \printcontacts
+\def\printcontacts{
+  \@ifundefined{contacts}{}{
+    {
+        \centering\joinlist{\contactsep}{\contacts}%
+        \par
+      }
+    \subheaderskip
+  }
+}
+
+% \printwebsites
+\def\printwebsites{
   \@ifundefined{websites}{}{
     {
-        \centering\joinlist{#1}{\websites}
-
+        \centering\joinlist{\websitesep}{\websites}%
+        \par
       }
+    \subheaderskip
   }
 }
 
@@ -160,7 +188,7 @@
 
 % Command to add a link to a certificate
 \newcommand{\certlink}[2]{%
-  \hyperlink{#1}{#2}
+  \hyperlink{#1}{#2}%
 }
 
 
@@ -169,12 +197,10 @@
 
 % Text of the head of the document
 \def\cvheadtext{                     % Begin document
-  \printname                        % Print the name specified with \name
-  \@ifundefined{@contact}{}{     % Print the address if specified
-    \printsubheader{\@address}}
-  \@ifundefined{@address}{}{   % Print the contact if specified
-    \printsubheader{\@contact}}
-  \printwebsites{ | }
+  \printname%                        % Print the name specified with \name
+  \printaddress%
+  \printcontacts%
+  \printwebsites%
 }
 
 % Design the head of the document (with or without picture)
@@ -183,13 +209,13 @@
     \cvheadtext
   }{
     \centerline{
-      \begin{minipage}{.55\textwidth}
-        \cvheadtext
+      \begin{minipage}{.65\textwidth}
+        \cvheadtext%
       \end{minipage}
-      \hfill
-      \begin{minipage}{.45\textwidth}
+      \hfill%
+      \begin{minipage}{.35\textwidth}
         \begin{figure}[H]
-          \includegraphics[width=\textwidth, right]{\@picture}
+          \includegraphics[width=\textwidth, right]{\@picture}%
         \end{figure}
       \end{minipage}
     }
@@ -210,8 +236,8 @@
       \setlength{\leftmargin}{.5em}
       \vspace{-1.5em}
     }
-    \item[]
-          \BODY
+    \item[]%
+          \BODY%
   \end{list}
 }
 
@@ -234,8 +260,8 @@
         \setlength{\leftmargin}{1em}
         \vspace{-1.5em}
       }
-      \item[]
-            \BODY
+      \item[]%
+            \BODY%
     \end{list}
   }
 }
@@ -279,9 +305,9 @@
     \addcontentsline{toc}{part}{\certheading}
     \vspace*{\fill}
     \begin{center}
-      {\Huge\certheading}
+      {\Huge\certheading}%
     \end{center}
-    \vspace*{\fill}
+    \vspace*{\fill}%
     \includepdfs%
   }
 }
