@@ -5,7 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Author: Tilman Hornung <mail@tilmanhornung.de>, tilmanhornung.de
 % Based on the resume class (github.com/treyhunner/resume), copyright (C) 2010 by Trey Hunner
-% Also influenced by Awesome-CV (github.com/posquit0/Awesome-CV): Claud D. Park <posquit0.bj@gmail.com>, posquit0.com
+% and on Awesome-CV (github.com/posquit0/Awesome-CV): Claud D. Park <posquit0.bj@gmail.com>, posquit0.com
 %
 % Copying and distribution of this file - with or without modification -
 % are permitted in any medium without royalty, provided the copyright
